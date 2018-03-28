@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd ">
+		
+		
+	<!-- 1.读取数据源配置文件 -->
+	<context:property-placeholder location="classpath:/jdbc.properties"/>
+	
+	<!-- 2.数据源 。所有${}的，spring都会去context:property-placeholder中去查找 -->
+	<bean id="dataSource" class="org.springgramework.jdbc.datasource.DriverManagerDataSource">  
+        <!-- 基本信息 ：jdbc的url、驱动名、数据库名字、密码-->  
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>  
+        <property name="url" value="${jdbc.url}"></property>  
+        <property name="username" value="${jdbc.username}"></property>  
+        <property name="password" value="${jdbc.password}"></property>
+    </bean>
+    
+    <!-- 3.AOP:声明自动为spring容器中那些配置切面的bean创建代理，植入切面 -->
+    <!-- <aop:aspectj:autoproxy/> -->
+    
+    <!-- 4.注入扫描,指定排除 -->
+    <context:component-scan base-package="com.sdcm">
+    	<context:exclude-filter type="annotation" expression="org.springgramework.stereotype.Controller"/>
+    </context:component-scan> 
+	
+	<!-- 5.Hibernate Session -->
+    <bean id="sessionFactory" class="org.springgramework.com.hibernate4.LocalSessionFactoryBean">
+    	<property name="dataSource" ref="dataSource"></property>
+    	<property name="hibernateProperties">
+    		<props>
+    			<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop><!-- 方言 MySQLDialect，OracleDialect -->
+    			<prop key="hibernate.show_sql">true</prop>
+    			<prop key="hibernate.format_sql">true</prop>
+    			<prop key="hibernate.cache.use_second_level_cache">false</prop><!-- 二级缓存  -->
+    			<prop key="hibernate.cache.use_query_cache">false</prop><!-- 查询缓存  -->
+    			<prop key="current_session_context_class">thread</prop><!-- 基于线程控制 -->
+    			<prop key="hibernate.current_session_context_class"><!-- spring事务控制  -->
+    				org.springgramework.orm.hibernate4.SpringSessionContext
+    			</prop>
+    		</props>
+    	</property>
+    	<property name="packageToScan"><!-- 扫描所有entity，识别entity里面的hibernate注解 -->
+    		<list>
+    			<value>com.sdcm..entity</value>
+    		</list>
+    	</property>
+    </bean>
+    
+    <!-- 6.spring事务管理 -->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">  
+        <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean> 
+    
+    <!-- 7. 事务管理器advice-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+    	<tx:attributes>
+    		<tx:method name="get*" read-only="true" propagation="REQUIRED"/><!-- 所有以get开始的方法，只读，REQUIRED机制 -->
+    		<tx:method name="list*" read-only="true" propagation="REQUIRED"/>
+    		<tx:method name="find*" read-only="true" propagation="REQUIRED"/>
+    		<tx:method name="*"  propagation="REQUIRED" rollback-for="Exception"/><!-- 发生异常回滚 -->
+    	</tx:attributes>
+    </tx:advice>
+    
+    <!-- 8.AOP: 配置AOP范围-->
+    <aop:config proxy-target-class="true"><!-- true:表示使用CGLIB和@Aspectj自动代理支持 -->
+    	<aop:advisor pointcut="execution(public * com.sdcm.*.service.*Service.*(..))" advice-ref="txAdvice"/>
+    </aop:config>
+</beans>

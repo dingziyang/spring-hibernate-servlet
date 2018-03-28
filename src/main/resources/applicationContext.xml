@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd ">
+		
+	
+	<!-- 自动扫描 -->
+	<context:component-scan base-package="com.sdcm">
+	    <!-- 扫描时跳过 @Controller 注解的JAVA类（控制器） -->
+	    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+		
+	<!-- 1.读取数据源配置文件 <context:property-placeholder location="classpath:/jdbc.properties"/> -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <description>JDBC属性文件配置</description>
+        <property name="location" value="classpath:jdbc.properties"/>
+    </bean>
+	
+	<!-- 2.数据源 。所有${}的，spring都会去context:property-placeholder中去查找 -->
+	<!-- <bean id="dataSource" class="org.springgramework.jdbc.datasource.DriverManagerDataSource">  -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"></property>  
+        <property name="url" value="${jdbc.url}"></property>  
+        <property name="username" value="${jdbc.username}"></property>  
+        <property name="password" value="${jdbc.password}"></property>
+        <property name="maxIdle" value="${jdbc.maxIdle}"/>
+    </bean>
+    
+    <!-- 3.配置Hibernate的session-factory -->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+    	<property name="dataSource" ref="dataSource"></property>
+    	<property name="packagesToScan" value="com.sdcm.po" /><!-- 指定实体类所在的包，方便扫描加载 -->
+    	<property name="configLocations">
+            <list>
+                <value>classpath:hibernate.cfg.xml</value>
+            </list>
+        </property>
+        <!-- 指定映射文件所在的目录 -->
+        <!-- <property name="mappingDirectoryLocations" value="classpath:/com/exampsys/po/" /> -->
+    	<property name="hibernateProperties">
+    		<description>配置Hibernate的相关属性</description>
+    		<props>
+            	<!-- <prop key="hibernate.current_session_context_class">${hibernate.current_session_context_class}</prop> -->
+                <prop key="query.factory_class">${query.factory_class}</prop>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop><!-- 方言 -->
+                <prop key="hibernate.show_sql">${hibernate.showsql}</prop><!-- 向控制台打印SQL语句 -->
+                <prop key="hibernate.jdbc.fetch_size">${hibernate.jdbc.fetch_size}</prop><!-- 批量取 -->
+                <prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop><!-- 批量存 -->
+                <prop key="hibernate.cache.use_second_level_cache">${hibernate.cache.use_second_level_cache}</prop><!-- 二级缓存 -->
+                <prop key="hibernate.cache.provider_class">${hibernate.cache.provider_class}</prop>
+                <prop key="hibernate.session_factory_name">${hibernate.session_factory_name}</prop>
+            </props>
+    	</property>
+    </bean>
+    
+    <!-- 4. 基于hibernate的事务管理器 -->
+    <bean id="hTransactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <tx:annotation-driven transaction-manager="hTransactionManager"/>
+    
+    <!-- 5. 事务的规则 -->
+    <tx:advice id="hTxAdvice" transaction-manager="hTransactionManager">
+        <tx:attributes>
+            <tx:method name="add" isolation="DEFAULT" propagation="REQUIRED" timeout="-1" rollback-for="Exception" read-only="false"/>
+            <tx:method name="delete" isolation="DEFAULT" propagation="REQUIRED" timeout="-1" rollback-for="Exception" read-only="false"/>
+            <tx:method name="update" isolation="DEFAULT" propagation="REQUIRED" timeout="-1" rollback-for="Exception" read-only="false"/>
+            <tx:method name="get*" isolation="DEFAULT" propagation="REQUIRED" timeout="-1" rollback-for="Exception" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+    
+	<!-- 6. 应用于：哪些包的哪些方法、哪些类 -->
+    <aop:config>
+        <aop:pointcut id="managerMethod" expression="execution(* com.sdcm.service..*(..))" />
+        <aop:advisor advice-ref="hTxAdvice" pointcut-ref="managerMethod" />
+    </aop:config>
+    
+<!-- 注入 dao -->
+    <bean id="userInfoDao" class="com.sdcm.dao.impl.UserInfoDaoImpl">
+		<description>用户信息数据持久层</description>
+		<property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="roleInfoDao" class="com.sdcm.dao.impl.RoleInfoDaoImpl">
+		<description>角色数据持久层</description>
+		<property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="jobInfoDao" class="com.sdcm.dao.impl.JobInfoDaoImpl">
+		<description>工作流信息数据持久层</description>
+		<property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="jobProcessDao" class="com.sdcm.dao.impl.JobProcessDaoImpl">
+		<description>工作流过程数据持久层</description>
+		<property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="jobTypeDao" class="com.sdcm.dao.impl.JobTypeDaoImpl">
+		<description>工作流类型数据持久层</description>
+		<property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<bean id="processTypeDao" class="com.sdcm.dao.impl.ProcessTypeDaoImpl">
+		<description>工作流处理结果类型数据持久层</description>
+		<property name="dataSource" ref="dataSource" />
+        <property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+<!-- 注入service -->	
+	<bean id="userInfoService" class="com.sdcm.service.impl.UserInfoServiceImpl" factory-method="getInstance">
+		<description>用户信息业务逻辑层</description>
+		<property name="dao" ref="userInfoDao"></property>
+		<property name="roleInfoDao" ref="roleInfoDao"></property>
+	</bean>
+	<bean id="roleInfoService" class="com.sdcm.service.impl.RoleInfoServiceImpl" factory-method="getInstance">
+		<description>角色业务逻辑层</description>
+		<property name="dao" ref="roleInfoDao"></property>
+	</bean>
+	<bean id="jobInfoService" class="com.sdcm.service.impl.JobInfoServiceImpl" factory-method="getInstance">
+		<description>工作流信息业务逻辑层</description>
+		<property name="dao" ref="jobInfoDao"></property>
+		<property name="processTypeDao" ref="processTypeDao"></property>
+		<property name="jobProcessDao" ref="jobProcessDao"></property>
+		<property name="userInfoDao" ref="userInfoDao"></property>
+		<property name="roleInfoDao" ref="roleInfoDao"></property>
+		<property name="jobTypeDao" ref="jobTypeDao"></property>
+	</bean>
+	<bean id="jobProcessService" class="com.sdcm.service.impl.JobProcessServiceImpl" factory-method="getInstance">
+		<description>工作流过程业务逻辑层</description>
+		<property name="dao" ref="jobProcessDao"></property>
+		<property name="jobInfoDao" ref="jobInfoDao"></property>
+		<property name="userInfoDao" ref="userInfoDao"></property>
+		<property name="processTypeDao" ref="processTypeDao"></property>
+	</bean>
+	<bean id="jobTypeService" class="com.sdcm.service.impl.JobTypeServiceImpl" factory-method="getInstance">
+		<description>工作流类型业务逻辑层</description>
+		<property name="dao" ref="jobTypeDao"></property>
+	</bean>
+	<bean id="processTypeService" class="com.sdcm.service.impl.ProcessTypeServiceImpl" factory-method="getInstance">
+		<description>工作流处理结果类型业务逻辑层</description>
+		<property name="dao" ref="processTypeDao"></property>
+	</bean>
+	
+</beans>

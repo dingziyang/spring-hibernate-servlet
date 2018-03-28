@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
+	http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+
+	<welcome-file-list>
+		<welcome-file>/index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- 告知javaEE容器，有哪些内容需要添加到上下文中去 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath:applicationContext.xml</param-value>
+	</context-param>
+
+	<!-- Spring监听器 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+	<!-- 加载logback,设置日志刷新间隔时间 -->
+	<context-param>
+		<param-name>logbackConfigLocation</param-name>
+		<param-value>
+			classpath:logback.xml
+		</param-value>
+	</context-param>
+	<context-param>
+		<param-name>log4jRefreshInterval</param-name>
+		<param-value>60000</param-value>
+	</context-param>
+	<!-- 加载Spring框架中的log4j监听器Log4jConfigListener -->
+	<listener>
+		<!-- <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class> -->
+		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+	</listener>
+	<!-- 为避免项目间冲突，定义唯一的名称 -->
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>sdcm.root</param-value>
+	</context-param>
+
+	<!-- 所有打开的session会被保存在一个线程变量里,实现Hibernate的延迟加载功能 -->
+	<filter>
+		<filter-name>OpenSessionInViewFilter</filter-name>
+		<filter-class>
+			org.springframework.orm.hibernate5.support.OpenSessionInViewFilter
+		</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>OpenSessionInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- spring框架提供的字符集过滤器 ,spring Web MVC框架提供用于解决POST方式造成的中文乱码问题 -->
+	<filter>
+		<filter-name>encodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter
+		</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<!-- force强制 -->
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- session过期时间30分钟 -->
+	<session-config> 
+		<session-timeout>30</session-timeout> 
+	</session-config> 
+	<!-- one:登录检查过滤器 -->
+	<filter>
+		<filter-name>loginFilter</filter-name>
+		<filter-class>com.sdcm.filter.LoginFilter</filter-class>
+		<!-- 声明不需要检查的路径 -->
+		<init-param>
+			<param-name>ignorePath</param-name>
+			<param-value>/toLogin.do,/login.do</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>loginFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- two:servlet mapping -->
+	<!-- <servlet>
+		<servlet-name>toLogin</servlet-name>
+		<servlet-class>com.sdcm.controller.ToLoginController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>toLogin</servlet-name>
+		<url-pattern>/toLogin.do</url-pattern>
+	</servlet-mapping> -->
+
+	<!-- <servlet>
+		<servlet-name>login</servlet-name>
+		<servlet-class>com.sdcm.controller.LoginController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>login</servlet-name>
+		<url-pattern>/login.do</url-pattern>
+	</servlet-mapping> -->
+	
+	<!-- <servlet>
+		<servlet-name>toHome</servlet-name>
+		<servlet-class>com.sdcm.controller.HomeController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>toHome</servlet-name>
+		<url-pattern>/toHome.do</url-pattern>
+	</servlet-mapping> -->
+	
+	<!-- <servlet>
+		<servlet-name>loginOut</servlet-name>
+		<servlet-class>com.sdcm.controller.LoginOutController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>loginOut</servlet-name>
+		<url-pattern>/loginOut.do</url-pattern>
+	</servlet-mapping> -->
+	
+	<!-- <servlet>
+		<servlet-name>icheck</servlet-name>
+		<servlet-class>com.sdcm.controller.content.ICheckController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>icheck</servlet-name>
+		<url-pattern>/icheck.do</url-pattern>
+	</servlet-mapping> -->
+	
+	<!-- <servlet>
+		<servlet-name>icreate</servlet-name>
+		<servlet-class>com.sdcm.controller.content.ICreateController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>icreate</servlet-name>
+		<url-pattern>/icreate.do</url-pattern>
+	</servlet-mapping> -->
+	
+	<!-- <servlet>
+		<servlet-name>newjob</servlet-name>
+		<servlet-class>com.sdcm.controller.content.NewJobController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>newjob</servlet-name>
+		<url-pattern>/newjob.do</url-pattern>
+	</servlet-mapping>
+	 -->
+	<!-- <servlet>
+		<servlet-name>commitjob</servlet-name>
+		<servlet-class>com.sdcm.controller.content.CommitJobController</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>commitjob</servlet-name>
+		<url-pattern>/commitjob.do</url-pattern>
+	</servlet-mapping> -->
+	
+	<!-- three:指定某编号的错误对应某错误页面。 -->
+	<error-page>
+		<error-code>404</error-code>
+		<location>/WEB-INF/error.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/WEB-INF/error.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/error.jsp</location>
+	</error-page>
+</web-app>

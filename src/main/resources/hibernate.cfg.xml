@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+    <session-factory>
+        <!-- 打印SQL语句前,先格式化  -->
+        <property name="format_sql">true</property>
+
+        <!-- hbm2ddl.auto: 生成表结构的策略配置
+             update(最常用的取值): 如果当前数据库中不存在表结构,那么自动创建表结构. 
+                     	如果存在表结构,并且表结构与实体一致,那么不做修改
+                     	如果存在表结构,并且表结构与实体不一致,那么会修改表结构.会保留原有列.
+             create(很少):无论是否存在表结构.每次启动Hibernate都会重新创建表结构.(数据会丢失)
+             create-drop(极少): 无论是否存在表结构.每次启动Hibernate都会重新创建表结构.每次Hibernate运行结束时,删除表结构.
+             validate(很少):不会自动创建表结构.也不会自动维护表结构.Hibernate只校验表结构. 如果表结构不一致将会抛出异常.
+          -->
+        <property name="hbm2ddl.auto">update</property>
+
+        <!-- 事务自动提交  -->
+        <property name="hibernate.connection.autocommit">true</property>
+
+        <!-- 将Session与线程绑定。只有配置了该配置,才能使用getCurrentSession -->
+        <!-- <property name="hibernate.current_session_context_class">thread</property> -->
+
+        <!-- 映射mapping ，必须在property 后面 -->
+        <mapping class="com.sdcm.po.UserInfo" />
+		<mapping class="com.sdcm.po.RoleInfo" />
+		<mapping class="com.sdcm.po.JobInfo" />
+		<mapping class="com.sdcm.po.JobProcess" />
+		<mapping class="com.sdcm.po.JobType" />
+		<mapping class="com.sdcm.po.ProcessType" />
+    </session-factory>
+    
+</hibernate-configuration>

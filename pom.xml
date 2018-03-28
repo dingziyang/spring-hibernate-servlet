@@ -1,0 +1,473 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>springMaven</groupId>
+  <artifactId>springMaven</artifactId>
+  <packaging>war</packaging>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>springMaven Maven Webapp</name>
+  <url>http://maven.apache.org</url>
+  
+  <dependencies>
+  
+  	<!--  junit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.9</version>
+      <scope>test</scope>
+    </dependency>
+    
+	<!-- servlet-api -->
+	<dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>javax.servlet-api</artifactId>
+		<version>3.1.0</version>
+		<scope>provided</scope>
+	</dependency>
+    
+    <!-- EL表达式  -->
+	<dependency>
+		<groupId>ognl</groupId>
+		<artifactId>ognl</artifactId>
+		<version>3.1.14</version>
+	</dependency>
+	<dependency>
+		<groupId>javax.el</groupId>
+		<artifactId>javax.el-api</artifactId>
+		<version>3.0.1-b04</version>
+	</dependency>
+    
+    <!-- JSTL 包含2个jar -->
+    <dependency>
+		<groupId>javax.servlet</groupId>
+		<artifactId>jstl</artifactId>
+		<version>1.2</version>
+	</dependency>
+	<dependency>
+	    <groupId>taglibs</groupId>
+	    <artifactId>standard</artifactId>
+	    <version>1.1.2</version>
+	</dependency>
+    
+    <!-- JSP -->
+    <dependency>
+		<groupId>javax.servlet.jsp</groupId>
+		<artifactId>javax.servlet.jsp-api</artifactId>
+		<version>2.3.1</version>
+		<scope>provided</scope>
+	</dependency>
+    
+    <!-- 包含在应用中使用spring的aop特性时所需的类 -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aop</artifactId>
+		<version>4.3.4.RELEASE</version>
+	</dependency>
+    <!-- 提供spring对aspectj的支持 -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-aspects</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency>
+    <!--（依赖注入）的基础实现 ，起到支撑作用 -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-beans</artifactId>
+		<version>4.3.4.RELEASE</version>
+	</dependency>
+    <!-- spring-context，为spring核心提供了大量扩展 -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>4.3.4.RELEASE</version>
+    </dependency>
+    <!-- spring的核心包，包含spring框架基本的核心工具类  -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-core</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency>
+    <!-- spring表达式语言 ：${} -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-expression</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency>
+    <!--spring对jdbc的简单封装 -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-jdbc</artifactId>
+	    <version>4.3.4.RELEASE</version>
+	</dependency>
+	<!-- ojdbc7，加在lib中 -->
+    <!-- 包含web应用开发时，用到spring框架时所需的核心类 -->
+    <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-web</artifactId>
+	    <version>4.3.4.RELEASE</version>
+	</dependency>
+    <!-- spring提供对事务的支持，事务的相关处理以及实现类就在这个jar包中 -->
+    <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-tx</artifactId>
+	    <version>4.3.4.RELEASE</version>
+	</dependency>
+	<!-- @Inject 注入方式  -->
+	<dependency>
+		<groupId>javax.inject</groupId>
+		<artifactId>javax.inject</artifactId>
+		<version>1</version>
+	</dependency>
+    
+    
+    <!-- spring-context-support，spring-context 的扩展支持，用于 mvc 方面 -->
+	<!-- <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-context-support</artifactId>
+	    <version>4.3.4.RELEASE</version>
+	</dependency> -->
+    <!-- spring对服务器的代理接口 -->
+    <!-- <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-instrument</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency> -->
+	<!-- spring对tomcat连接池的集成 -->
+	<!-- <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-instrument-tomcat</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency> -->
+    <!-- spring对jms(java message service)的封装，为了简化对jms api的使用 -->
+    <!-- <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-jms</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency> -->
+    <!-- 为spring集成messaging api和消息协议提供支持 -->
+    <!-- <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-messaging</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency> -->
+    <!-- spring 整合第三方的 orm 映射支持 -->
+	<dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-orm</artifactId>
+	    <version>4.3.4.RELEASE</version>
+	</dependency>
+    
+    
+    
+    <!-- spring 对object/xmi 的映射的支持，可以让java与xml之间来回切换 -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-oxm</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency>
+	
+	
+    <!-- spring对junit框架的简单封装 -->
+    <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-test</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency>
+    
+    
+    <!-- spring-webmvc -->
+    <!-- <dependency>
+	    <groupId>org.springframework</groupId>
+	    <artifactId>spring-webmvc</artifactId>
+	    <version>4.3.4.RELEASE</version>
+	</dependency> -->
+    <!-- <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-webmvc-portlet</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency> -->
+	<!-- <dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-websocket</artifactId>
+		<version>4.3.6.RELEASE</version>
+	</dependency> -->
+	
+	
+	<!-- hibernate -->
+	<dependency>
+		<groupId>org.hibernate.common</groupId>
+		<artifactId>hibernate-commons-annotations</artifactId>
+		<version>5.0.1.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+		<version>5.2.9.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator</artifactId>
+		<version>5.4.1.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator-annotation-processor</artifactId>
+		<version>5.4.1.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator-cdi</artifactId>
+		<version>5.4.1.Final</version>
+	</dependency>
+	<!-- 如果没有，则相关的hibernate映射不会执行hql语句 -->
+	<dependency>
+		<groupId>antlr</groupId>
+		<artifactId>antlr</artifactId>
+		<version>2.7.7</version>
+	</dependency>
+	
+	
+	<!-- logback日志 -->
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.25</version>
+	</dependency>
+	<dependency>
+		<groupId>ch.qos.logback</groupId>
+		<artifactId>logback-core</artifactId>
+		<version>1.1.11</version>
+	</dependency>
+	<dependency>
+		<groupId>ch.qos.logback</groupId>
+		<artifactId>logback-classic</artifactId>
+		<version>1.1.11</version>
+	</dependency>
+	<dependency>
+	    <groupId>org.logback-extensions</groupId>
+	    <artifactId>logback-ext-spring</artifactId>
+	    <version>0.1.4</version>
+	</dependency>
+	
+	<!-- 用来检查、”动态”修改以及创建 Java类 -->
+	<dependency>
+		<groupId>org.javassist</groupId>
+		<artifactId>javassist</artifactId>
+		<version>3.21.0-GA</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>org.osgi</groupId>
+		<artifactId>org.osgi.core</artifactId>
+		<version>6.0.0</version>
+	</dependency>
+	
+	<!-- 开源对象池化组件 -->
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-pool2</artifactId>
+		<version>2.4.2</version>
+	</dependency>
+	<dependency>
+		<groupId>commons-pool</groupId>
+		<artifactId>commons-pool</artifactId>
+		<version>1.6</version>
+	</dependency>
+	
+	<!-- Hibernat使用Apache Jakarta Commons项目提供的多个工具类库 -->
+	<dependency>
+		<groupId>commons-logging</groupId>
+		<artifactId>commons-logging</artifactId>
+		<version>1.2</version>
+	</dependency>
+	
+	<!-- 文件上传 -->
+	<dependency>
+		<groupId>commons-io</groupId>
+		<artifactId>commons-io</artifactId>
+		<version>2.5</version>
+	</dependency>
+	<dependency>
+		<groupId>commons-fileupload</groupId>
+		<artifactId>commons-fileupload</artifactId>
+		<version>1.3.2</version>
+	</dependency>
+	
+	<!-- dbcp连接池  -->
+	<dependency>
+		<groupId>commons-dbcp</groupId>
+		<artifactId>commons-dbcp</artifactId>
+		<version>1.4</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-dbcp2</artifactId>
+		<version>2.1.1</version>
+	</dependency>
+	
+	<!-- 连接池需要的jar -->
+	<dependency>
+		<groupId>commons-collections</groupId>
+		<artifactId>commons-collections</artifactId>
+		<version>3.2.2</version>
+	</dependency>
+	
+	<!-- 操作JAVA BEAN的工具包 -->
+	<dependency>
+		<groupId>commons-beanutils</groupId>
+		<artifactId>commons-beanutils</artifactId>
+		<version>1.9.3</version>
+	</dependency>
+	
+	<!-- 对SAX的封装，用于直接通过XML文件来生成Java类实例 -->
+	<dependency>
+		<groupId>commons-digester</groupId>
+		<artifactId>commons-digester</artifactId>
+		<version>2.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-lang3</artifactId>
+		<version>3.5</version>
+	</dependency>
+	
+	<!-- Hibernate在解析XML配置和XML映像元文件时需要使用dom4j -->
+	<dependency>
+		<groupId>dom4j</groupId>
+		<artifactId>dom4j</artifactId>
+		<version>1.6.1</version>
+	</dependency>
+	
+	<!-- Java Transaction API -->
+	<dependency>
+		<groupId>javax.transaction</groupId>
+		<artifactId>jta</artifactId>
+		<version>1.1</version>
+	</dependency>
+	
+	<!-- 一个简单的java类库用于将一种对象转换成另外一种对象 -->
+	<dependency>
+		<groupId>net.sf.ezmorph</groupId>
+		<artifactId>ezmorph</artifactId>
+		<version>1.0.6</version>
+	</dependency>
+	
+	<!-- 具有完整通用信息的内省类型库，包括解析字段和方法类型。 -->
+	<dependency>
+		<groupId>com.fasterxml</groupId>
+		<artifactId>classmate</artifactId>
+		<version>1.3.3</version>
+	</dependency>
+	
+	<!-- cglib：Hibernate在运行时使用这个代码生成库强化类（与Java反射机制联合使用），nodep是包含了asm包的 -->
+	<dependency>
+		<groupId>cglib</groupId>
+		<artifactId>cglib-nodep</artifactId>
+		<version>3.2.5</version>
+	</dependency>
+    
+    <dependency>
+		<groupId>org.aspectj</groupId>
+		<artifactId>aspectjweaver</artifactId>
+		<version>1.8.10</version>
+	</dependency>
+	
+	<!-- 面向切面，动态织入 -->
+	<dependency>
+		<groupId>aopalliance</groupId>
+		<artifactId>aopalliance</artifactId>
+		<version>1.0</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.codehaus.plexus</groupId>
+		<artifactId>plexus-classworlds</artifactId>
+		<version>2.5.2</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.ant</groupId>
+		<artifactId>ant-launcher</artifactId>
+		<version>1.10.1</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.apache.ant</groupId>
+		<artifactId>ant</artifactId>
+		<version>1.10.1</version>
+	</dependency>
+	
+	<!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-catalina -->
+	<dependency>
+	    <groupId>org.apache.tomcat</groupId>
+	    <artifactId>tomcat-catalina</artifactId>
+	    <version>7.0.77</version>
+	    <scope>provided</scope>
+	</dependency>
+	
+	<!-- jackson -->
+	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-core-asl</artifactId>
+		<version>1.9.13</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-core</artifactId>
+		<version>2.8.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-annotations</artifactId>
+		<version>2.8.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.fasterxml.jackson.core</groupId>
+		<artifactId>jackson-databind</artifactId>
+		<version>2.8.7</version>
+	</dependency>
+
+	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-mapper-lgpl</artifactId>
+		<version>1.9.13</version>
+	</dependency>
+
+	<dependency>
+		<groupId>com.fasterxml.jackson.module</groupId>
+		<artifactId>jackson-module-jaxb-annotations</artifactId>
+		<version>2.8.7</version>
+	</dependency>
+	
+  </dependencies>
+  
+  <build>
+    <finalName>springMaven</finalName>
+    <plugins>
+		<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-compiler-plugin</artifactId>
+			<executions>
+				<execution>
+					<id>default-compile</id>
+					<phase>compile</phase>
+					<goals>
+						<goal>compile</goal>
+					</goals>
+				</execution>
+			</executions>
+			<configuration>
+				<source>1.8</source>
+				<target>1.8</target>
+				<encoding>UTF-8</encoding>
+			</configuration>
+		</plugin>
+	</plugins>
+  </build>
+</project>
