@@ -1,0 +1,346 @@
+-- Create table
+create table JOB_INFO
+(
+  id            NUMBER(20) not null,
+  job_title     VARCHAR2(255),
+  job_content   VARCHAR2(500) ,
+  job_type_no   VARCHAR2(4),
+  job_has_annex NUMBER(1),
+  job_annex_url VARCHAR2(255),
+  create_by     NUMBER(20),
+  create_time   DATE default sysdate,
+  update_by     NUMBER(20) ,
+  update_time   DATE default sysdate,
+  money         NUMBER(6,2)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column JOB_INFO.id
+  is '主键';
+comment on column JOB_INFO.job_title
+  is '工作流标题';
+comment on column JOB_INFO.job_content
+  is '工作流内容主体';
+comment on column JOB_INFO.job_type_no
+  is '工作流类型编号（0000-9999）';
+comment on column JOB_INFO.job_has_annex
+  is '1:没有附件，2:有附件';
+comment on column JOB_INFO.job_annex_url
+  is '附件地址（暂时只支持一个附件）';
+comment on column JOB_INFO.create_by
+  is '创建人';
+comment on column JOB_INFO.create_time
+  is '创建时间';
+comment on column JOB_INFO.update_by
+  is '修改人';
+comment on column JOB_INFO.update_time
+  is '修改时间';
+comment on column JOB_INFO.money
+is '金额';
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table JOB_INFO
+  add primary key (ID)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  );
+
+
+create sequence SEQ_JOB_INFO
+minvalue 1        
+nomaxvalue        
+start with 1      
+increment by 1    
+nocycle           
+nocache;          
+
+CREATE OR REPLACE TRIGGER TG_JOB_INFO 
+BEFORE INSERT ON JOB_INFO FOR EACH ROW WHEN (NEW.id is null)
+begin
+       select SEQ_JOB_INFO.nextval into:NEW.id from dual;
+end;
+
+-------------------------------------------------------------
+
+-- Create table
+create table JOB_PROCESS
+(
+  id          NUMBER(20) not null,
+  prev        NUMBER(20),
+  next        NUMBER(20) ,
+  status      INTEGER,
+  create_by   NUMBER(20),
+  create_time DATE default sysdate ,
+  update_by   NUMBER(20),
+  update_time DATE default sysdate,
+  job_id   NUMBER(20)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column JOB_PROCESS.id
+  is '主键';
+comment on column JOB_PROCESS.prev
+  is '上一位人员(如果刚开始，就是发起者)';
+comment on column JOB_PROCESS.next
+  is '下一位人员(如果是完成工作流，就是发起者)';
+comment on column JOB_PROCESS.status
+  is '（待处理，打回，通过，拒绝等状态，1-99）';
+comment on column JOB_PROCESS.create_by
+  is '创建人';
+comment on column JOB_PROCESS.create_time
+  is '创建时间';
+comment on column JOB_PROCESS.update_by
+  is '修改人';
+comment on column JOB_PROCESS.update_time
+  is '修改时间';
+comment on column JOB_PROCESS.job_id
+is '工作流id';
+
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table JOB_PROCESS
+  add primary key (ID)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  );
+
+create sequence SEQ_JOB_PROCESS
+minvalue 1 
+nomaxvalue 
+start with 1
+increment by 1
+nocycle  
+nocache;
+
+CREATE OR REPLACE TRIGGER TG_JOB_PROCESS
+BEFORE INSERT ON JOB_PROCESS FOR EACH ROW WHEN (NEW.id is null)
+begin
+       select SEQ_JOB_PROCESS.nextval into:NEW.id from dual;
+end;
+
+-----------------------------------
+
+-- Create table
+create table JOB_TYPE
+(
+  id        NUMBER(20) not null,
+  type_no   VARCHAR2(4) ,
+  type_name VARCHAR2(50)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 64
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column JOB_TYPE.id
+  is '主键';
+comment on column JOB_TYPE.type_no
+  is '工作流类型编号(0001-9999)';
+comment on column JOB_TYPE.type_name
+  is '工作流类型名称';
+-- Create/Recreate primary, unique and foreign key constraints 
+alter table JOB_TYPE
+  add primary key (ID)
+  using index 
+  tablespace USERS
+  pctfree 10
+  initrans 2
+  maxtrans 255
+  storage
+  (
+    initial 64K
+    minextents 1
+    maxextents unlimited
+  );
+
+
+create sequence SEQ_JOB_TYPE
+	minvalue 1 
+	nomaxvalue 
+	start with 1
+	increment by 1
+	nocycle  
+	nocache;
+
+CREATE OR REPLACE TRIGGER TG_JOB_TYPE
+BEFORE INSERT ON JOB_TYPE FOR EACH ROW WHEN (NEW.id is null)
+begin
+       select SEQ_JOB_TYPE.nextval into:NEW.id from dual;
+end;
+
+-------------------------------------
+
+-- Create table
+create table PROCESS_TYPE
+(
+  id         NUMBER(20) not null,
+  type_value INTEGER,
+  type_name  VARCHAR2(50)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 16
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column PROCESS_TYPE.id
+  is '主键';
+comment on column PROCESS_TYPE.type_value
+  is '(待处理，打回，通过，拒绝等状态，1-99)';
+comment on column PROCESS_TYPE.type_name
+  is '状态名';
+
+create sequence SEQ_PROCESS_TYPE
+	minvalue 1 
+	nomaxvalue 
+	start with 1
+	increment by 1
+	nocycle  
+	nocache;
+
+CREATE OR REPLACE TRIGGER TG_PROCESS_TYPE
+BEFORE INSERT ON PROCESS_TYPE FOR EACH ROW WHEN (NEW.id is null)
+begin
+       select SEQ_PROCESS_TYPE.nextval into:NEW.id from dual;
+end;
+
+------------------
+
+-- Create table
+create table ROLE_INFO
+(
+  id         NUMBER(20) not null,
+  role_name  VARCHAR2(50),
+  role_level INTEGER
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 16
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column ROLE_INFO.id
+  is '主键';
+comment on column ROLE_INFO.role_name
+  is '角色名';
+comment on column ROLE_INFO.role_level
+  is '角色等级(1-99，1为最高级)';
+
+  create sequence SEQ_ROLE_INFO
+minvalue 1 
+nomaxvalue 
+start with 1
+increment by 1
+nocycle  
+nocache;
+
+CREATE OR REPLACE TRIGGER TG_ROLE_INFO
+BEFORE INSERT ON ROLE_INFO FOR EACH ROW WHEN (NEW.id is null)
+begin
+       select SEQ_ROLE_INFO.nextval into:NEW.id from dual;
+end;
+
+----------------
+
+-- Create table
+create table USER_INFO
+(
+  id             NUMBER(20) not null,
+  user_name      VARCHAR2(50),
+  user_pwd       VARCHAR2(50),
+  user_nick_name VARCHAR2(255) ,
+  create_time    DATE default sysdate ,
+  update_time    DATE default sysdate,
+  role_id        NUMBER(20),
+  high_user_id   NUMBER(20)
+)
+tablespace USERS
+  pctfree 10
+  initrans 1
+  maxtrans 255
+  storage
+  (
+    initial 16
+    minextents 1
+    maxextents unlimited
+  );
+-- Add comments to the columns 
+comment on column USER_INFO.id
+  is '主键';
+comment on column USER_INFO.user_name
+  is '用户名';
+comment on column USER_INFO.user_pwd
+  is '用户密码';
+comment on column USER_INFO.user_nick_name
+  is '用户昵称';
+comment on column USER_INFO.create_time
+  is '创建时间';
+comment on column USER_INFO.update_time
+  is '修改时间';
+comment on column USER_INFO.role_id
+  is '角色id';
+comment on column USER_INFO.high_user_id
+  is '上级id';
+
+create sequence SEQ_USER_INFO
+	minvalue 1 
+	nomaxvalue 
+	start with 1
+	increment by 1
+	nocycle  
+	nocache;
+
+CREATE OR REPLACE TRIGGER TG_USER_INFO
+BEFORE INSERT ON USER_INFO FOR EACH ROW WHEN (NEW.id is null)
+begin
+       select SEQ_USER_INFO.nextval into:NEW.id from dual;
+end;
